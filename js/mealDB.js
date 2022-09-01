@@ -1,7 +1,7 @@
 
 
-const loadMeals = () => {
-    const url = `https://www.themealdb.com/api/json/v1/1/search.php?f=a`;
+const loadMeals = (search) => {
+    const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
     
     fetch(url)//this line fetches the url;
     .then(res => res.json())//this line converts the response to json
@@ -11,13 +11,15 @@ const loadMeals = () => {
 // this function will display what various meals we have 
 const displayMeals = meals => {
     const mealContainer = document.getElementById('mealContainer');//step-1
+    mealContainer.innerHTML = ``
 
     //for each loop to get each meals;
     meals.forEach(meal => {//step-2
         const mealDiv = document.createElement('div');//step-3
+        mealDiv.classList.add('col');
 
         mealDiv.innerHTML = `
-        <div class="card">
+        <div onclick="displayMealDetail(${meal.idMeal})" class="card">
             <img src="${meal.strMealThumb}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h3 class="card-title">${meal.strMeal}</h3>
@@ -33,4 +35,22 @@ const displayMeals = meals => {
     });
 }
 
-loadMeals();
+const searchFood = () => {
+    const searchArea = document.getElementById('searchMeal'); //got the input field
+
+    const searchText = searchArea.value;//got what the user is typing;
+
+    loadMeals(searchText);//this will show all the search resultse;
+
+    searchArea.value = '';//this will get rid of the previous searches;
+}
+
+const displayMealDetail = (mealId) => {
+    const dynamicURL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`;
+    
+    fetch(dynamicURL)
+    .then(res => res.json())
+    .then(data => console.log(data.meals[0]))
+}
+
+loadMeals('');
